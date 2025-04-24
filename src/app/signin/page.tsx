@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { supabase } from "../../utils/supabaseClient";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const SignInPage: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -10,17 +11,33 @@ const SignInPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const router = useRouter(); // Tambahkan router untuk redirect
 
+  // Handler sign in
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setMessage("");
+    // Proses sign in ke Supabase
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
-      setMessage(error.message);
+      // Deteksi error terkait verifikasi email
+      if (
+        error.message.toLowerCase().includes("not confirmed") ||
+        error.message.toLowerCase().includes("not verified")
+      ) {
+        setMessage("Akun belum diverifikasi. Silakan cek email kamu dan klik link verifikasi sebelum login.");
+      } else if (
+        error.message.toLowerCase().includes("invalid login credentials")
+      ) {
+        setMessage("Email atau password salah, atau akun belum diverifikasi. Jika baru daftar, cek email untuk verifikasi sebelum login.");
+      } else {
+        setMessage(error.message); // Pesan error lain
+      }
     } else {
       setMessage("Berhasil masuk! Mohon tunggu...");
-      // TODO: Redirect ke halaman utama jika ingin
+      // Redirect ke halaman utama/feed setelah login sukses
+      router.push("/");
     }
     setLoading(false);
   };
@@ -71,8 +88,9 @@ const SignInPage: React.FC = () => {
             {loading ? "Signing in..." : "Sign In"}
           </button>
         </form>
+        {/* Pesan sukses/error tampil di sini */}
         {message && (
-          <div className="mt-3 text-center text-red-600 font-medium">{message}</div>
+          <div className={`mt-3 text-center font-medium ${message.includes('Berhasil') ? 'text-green-600' : 'text-red-600'}`}>{message}</div>
         )}
         <div className="mt-6 text-center text-gray-400">
           Belum punya akun?{' '}
