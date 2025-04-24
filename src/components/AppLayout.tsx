@@ -5,6 +5,7 @@ import Header from "./Header";
 import Sidebar from "./Sidebar";
 import ComposeBox from "./ComposeBox";
 import Feed from "./Feed";
+import BottomNav from "./BottomNav"; // tambahkan import BottomNav
 import { supabase } from "../utils/supabaseClient";
 
 const AppLayout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
@@ -45,6 +46,8 @@ const AppLayout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
           {children}
         </main>
       </div>
+      {/* BottomNav hanya tampil di mobile */}
+      <BottomNav />
     </div>
   );
 };
