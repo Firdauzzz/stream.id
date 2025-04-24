@@ -5,8 +5,8 @@ const ComposeBox: React.FC = () => (
     <input
       type="text"
       placeholder="What's happening?"
-      className="w-full border px-2 py-1 rounded mb-2"
-      disabled
+      className="w-full border px-2 py-1 rounded mb-2 placeholder-gray-300 text-gray-900"
+      
     />
     <div className="flex gap-2 mb-2">
       <span>🖼️</span>
